@@ -20,7 +20,8 @@
           </div>
         </form>
         <ul class="list-group">
-          <todo v-for="(todo, index) in todos" v-model="todo.content" :key="todo.id" @delete="todos.splice(index, 1)">
+          <todo v-for="(todo, index) in todos" v-model="todo.content" :key="todo.id"
+            @delete="todos.splice(index, 1);saveTodo()" @save="saveTodo">
           </todo>
         </ul>
       </div>
@@ -49,9 +50,6 @@
           this.nextId = this.todos[this.todos.length - 1].id + 1
         }
       },
-      updated() {
-        localStorage.setItem('todos', JSON.stringify(this.todos))
-      },
       methods: {
         addTodo() {
           this.todos.push({
@@ -59,6 +57,10 @@
             content: this.newTodo
           })
           this.newTodo = ''
+          this.saveTodo()
+        },
+        saveTodo() {
+          localStorage.setItem('todos', JSON.stringify(this.todos))
         }
       }
     })
@@ -71,6 +73,7 @@
       },
       methods: {
         toggleEditable() {
+          if (!this.isDisabled) this.$emit('save')
           this.isDisabled = !this.isDisabled
         }
       },
